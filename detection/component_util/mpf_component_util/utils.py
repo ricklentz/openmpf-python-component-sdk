@@ -95,7 +95,7 @@ def rotation_angles_equal(a1: float, a2: float, epsilon=0.1) -> bool:
 TNumber = TypeVar('TNumber', int, float)
 
 
-class Point(NamedTuple, Generic[TNumber]):
+class Point(NamedTuple):
     """
     The C++ OpenCV has a cv::Point class, but the Python version uses 2-tuples to represent points.
     Since NamedTuple is a subclass of tuple, this class can be used as a parameter in OpenCV functions
@@ -104,12 +104,15 @@ class Point(NamedTuple, Generic[TNumber]):
     x: TNumber
     y: TNumber
 
+    @classmethod
+    def __class_getitem__(cls, item):
+        return cls
+
 
 _PointLike = Union['Point[TNumber]', Tuple[TNumber, TNumber], Sequence[TNumber]]
 
 
-
-class Size(NamedTuple, Generic[TNumber]):
+class Size(NamedTuple):
     """
     The C++ OpenCV has a cv::Size class, but the Python version uses 2-tuples to represent sizes.
     Since NamedTuple is a subclass of tuple, this class can be used as a parameter in OpenCV functions
@@ -131,6 +134,10 @@ class Size(NamedTuple, Generic[TNumber]):
     def as_size(obj: _SizeLike[TNumber]) -> Size[TNumber]:
         return obj if isinstance(obj, Size) else Size(*obj)
 
+    @classmethod
+    def __class_getitem__(cls, item):
+        return cls
+
 
 _SizeLike = Union['Size[TNumber]', Tuple[TNumber, TNumber], Sequence[TNumber]]
 
@@ -141,7 +148,7 @@ def element_wise_op(op, obj1, obj2, target_type=None) -> Any:
     return target_type(*(op(v1, v2) for v1, v2 in zip(obj1, obj2)))
 
 
-class Rect(NamedTuple, Generic[TNumber]):
+class Rect(NamedTuple):
     """
     The C++ OpenCV has a cv::Rect class, but the Python version uses 4-tuples to represent rectangles.
     Since NamedTuple is a subclass of tuple, this class can be used as a parameter in OpenCV functions
@@ -151,6 +158,10 @@ class Rect(NamedTuple, Generic[TNumber]):
     y: TNumber
     width: TNumber
     height: TNumber
+
+    @classmethod
+    def __class_getitem__(cls, item):
+        return cls
 
     @property
     def br(self) -> Point[TNumber]:
